@@ -1,3 +1,4 @@
+
 # coding: utf-8
 
 import numpy as np
@@ -622,6 +623,7 @@ class PoissonizedPlancherel:
 
 		self.theta = theta # Poisson param setting the length of the permutation
 		self.list_of_samples = []
+		self.list_of_diagrams = []
 
 	def __str__(self):
 
@@ -643,8 +645,10 @@ class PoissonizedPlancherel:
 		sigma = self._unif_permutation(N)
 		P, _ = self.__RSK(sigma)
 		sampl = [len(row)-i+0.5 for i, row in enumerate(P)]
+		diagram = [len(row) for i, row in enumerate(P)]
 		self.list_of_samples.append(sampl)
-
+		self.list_of_diagrams.append(diagram)
+        
 	def _unif_permutation(self, N):
 
 		tmp = np.arange(N)
@@ -681,7 +685,28 @@ class PoissonizedPlancherel:
 				P.append([x]); Q.append([it+1])
 
 		return P, Q
-
+	def plot_diagram(self):
+		d=self.list_of_diagrams[0]
+		d_2=[list(np.array(d)>i).count(True) for i in range(d[0])]
+		print(d_2)
+#		coordinatesx = [-1.3*d[0]]
+#		coordinatesy = [1.3*d[0]]
+#		for i in range(len(d)):
+#                  coordinatesx.append(i-d[i])
+#                  coordinatesx.append(i+1-d[i])
+#                  coordinatesy.append(i+d[i])
+#                  coordinatesy.append(i+1+d[i])
+#		coordinatesx.append(1.3*d[0])
+#		coordinatesy.append(1.3*d[0])
+#		plt.plot(coordinatesx,coordinatesy)  
+        #vertical_lines
+		plt.plot([0,-1.3*d[0]],[0,1.3*d[0]])
+		for i in range(len(d)):
+                    plt.plot([i+1,i+1-d[i]],[i+1,i+1+d[i]],color="B")
+		plt.plot([0,1.3*d[0]],[0,1.3*d[0]],color="B")
+		for i in range(len(d_2)):
+                    plt.plot([-i-1,-i-1+d_2[i]],[i+1,i+1+d_2[i]],color="B")
+        
 	def plot(self, title=''):
 		"""Display the process on the real line
 
